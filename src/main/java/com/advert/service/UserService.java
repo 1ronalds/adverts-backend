@@ -9,7 +9,7 @@ public class UserService {
 
     }
 
-    public void updateUser(UserDto userDto){
+    public void updateUser(String username, UserDto userDto){
 
     }
 

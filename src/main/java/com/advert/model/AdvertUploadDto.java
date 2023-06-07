@@ -7,9 +7,12 @@ import lombok.RequiredArgsConstructor;
 @Data
 @AllArgsConstructor
 @RequiredArgsConstructor
-public class AdvertMinimalDto {
+public class AdvertUploadDto {
     private Long advertID;
     private String title;
-    private Double price;
-    private String imgLocation;
+    private String description;
+    private double price;
+    private String imgName;
+    private String imgData;
+    private Long userID;
 }

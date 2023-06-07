@@ -1,12 +1,7 @@
 package com.advert.controller;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.advert.model.UserDto;
 import com.advert.service.UserService;
 
@@ -24,9 +19,9 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping
-    public ResponseEntity<Void> updateUser(@RequestBody UserDto userDto){
-        userService.updateUser(userDto);
+    @PutMapping("/{username}")
+    public ResponseEntity<Void> updateUser(@PathVariable String username, @RequestBody UserDto userDto){
+        userService.updateUser(username, userDto);
         return ResponseEntity.noContent().build();
     }
 

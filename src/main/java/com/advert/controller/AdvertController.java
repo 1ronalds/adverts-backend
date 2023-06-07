@@ -1,14 +1,10 @@
 package com.advert.controller;
 
 import java.util.List;
+
+import com.advert.model.AdvertUploadDto;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.advert.model.AdvertDto;
 import com.advert.model.AdvertMinimalDto;
@@ -28,24 +24,30 @@ public class AdvertController {
     }
     
     @GetMapping("/view/user/{username}")
-    public ResponseEntity<List<AdvertMinimalDto>> getAllAdvertsByUsername(@PathVariable String username){
+    public ResponseEntity<List<AdvertMinimalDto>> getAllMyAdverts(@PathVariable String username){
         return ResponseEntity.ok(advertService.getAllAdvertsByUsername(username));
     }
 
     @GetMapping("/view/advert/{id}")
-    public ResponseEntity<List<AdvertMinimalDto>> getAdvertById(@PathVariable Long id){
+    public ResponseEntity<AdvertDto> getAdvertById(@PathVariable Long id){
         return ResponseEntity.ok(advertService.getAdvertById(id));
     }
 
-    @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteAdvertById(@PathVariable Long id){
-        advertService.deleteAdvertById(id);
+    @DeleteMapping("/delete/{username}/{id}")
+    public ResponseEntity<Void> deleteAdvertById(@PathVariable Long id, @PathVariable String username){
+        advertService.deleteAdvertById(id, username);
         return ResponseEntity.noContent().build();
     }
 
-    @PostMapping("/new")
-    public ResponseEntity<Void> createNewAdvert(@RequestBody AdvertDto advertDto){
-        advertService.createNewAdvert(advertDto);
+    @PostMapping("/new/{username}")
+    public ResponseEntity<Void> createNewAdvert(@RequestBody AdvertUploadDto advertUploadDto, @PathVariable String username){
+        advertService.createNewAdvert(advertUploadDto, username);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/edit/{username}/{id}")
+    public ResponseEntity<Void> createNewAdvert(@RequestBody AdvertUploadDto advertUploadDto, @PathVariable String username, @PathVariable Long advertId){
+        advertService.editAdvert(advertUploadDto, username, advertId);
         return ResponseEntity.noContent().build();
     }
 
