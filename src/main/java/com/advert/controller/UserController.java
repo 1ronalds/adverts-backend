@@ -1,15 +1,16 @@
 package com.advert.controller;
 
+import com.advert.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.advert.model.UserDto;
-import com.advert.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
+
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/user")
+@RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 

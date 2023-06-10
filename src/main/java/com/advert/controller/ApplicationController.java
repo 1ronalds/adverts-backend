@@ -17,11 +17,11 @@ public class ApplicationController {
     private final ApplicationService applicationService;
     
     @GetMapping("/mine/{username}/formine/")
-    public ResponseEntity<List<ApplicationDto>> getAllMyApplicationsCreatedBy(@PathVariable String username){
+    public ResponseEntity<List<ApplicationDto>> getAllMyApplicationsToMyAdvertismentsCreatedBy(@PathVariable String username){
         return ResponseEntity.ok(applicationService.getAllApplicationsCreatedBy(username));
     }
     @GetMapping("/mine/{username}/forothers/")
-    public ResponseEntity<List<ApplicationDto>> getAllApplicationsForOthers(@PathVariable String username){
+    public ResponseEntity<List<ApplicationDto>> getAllApplicationsToOtherAdvertisements(@PathVariable String username){
         return ResponseEntity.ok(applicationService.getAllApplicationsForOthers(username));
     }
 
