@@ -11,6 +11,8 @@ import javax.persistence.*;
 @Entity
 @Table(name = "application")
 public class ApplicationEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "advert_id")
     private Long advertId;
 

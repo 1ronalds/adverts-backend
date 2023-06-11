@@ -24,7 +24,7 @@ public class AdminService {
     }
 
     public void deleteAdminUser(String username){
-        if(userRepository.findByUsername(username).isAdmin()){
+        if(userRepository.findByUsername(username).get().isAdmin()){
             userRepository.deleteByUsername(username);
         } else {
             throw new RuntimeException("You are not deleting admin user!");
@@ -33,7 +33,7 @@ public class AdminService {
     }
 
     public void createAdminUser(UserDto userDto){
-        if(userRepository.findByUsername(userDto.getUsername()) == null){
+        if(userRepository.findByUsername(userDto.getUsername()).isEmpty()){
             userRepository.save(new UserEntity(null, userDto.getUsername(), userDto.getEmail(), userDto.getPassword(), userDto.getPhone(), true));
         } else {
             throw new RuntimeException("User already exists!");

@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.advert.handler.InvalidDataException;
 import com.advert.model.AdvertDto;
 import com.advert.model.AdvertMinimalDto;
 import com.advert.model.AdvertUploadDto;
@@ -12,27 +14,32 @@ import com.advert.repository.AdvertRepository;
 import com.advert.repository.UserRepository;
 import com.advert.repository.model.AdvertEntity;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class AdvertService {
 
-    AdvertRepository advertRepository;
-    UserRepository userRepository;
+    private final AdvertRepository advertRepository;
+    private final UserRepository userRepository;
 
     public List<AdvertMinimalDto> getAdvertList() {
+        System.out.println("hello");
+        System.out.println(advertRepository.findAll());
         return advertRepository.findAll()
                 .stream()
+                .peek(advertEntity -> log.info("Processing advert: {}", advertEntity)) // This will log each advertEntity
                 .map((advertEntity) -> new AdvertMinimalDto(advertEntity.getAdvertID(), advertEntity.getTitle(), advertEntity.getPrice(), advertEntity.getImgLocation()))
                 .collect(Collectors.toList());
     }
 
     public List<AdvertMinimalDto> getAllAdvertsByUsername(String username) {
-        Long userId = userRepository.findByUsername(username).getUserID();
-        return advertRepository.findAllByUserID(userId)
+        Long userId = userRepository.findByUsername(username).get().getUserID();
+        return advertRepository.findAllByUserId(userId)
                 .stream()
                 .map((advertEntity) -> new AdvertMinimalDto(advertEntity.getAdvertID(), advertEntity.getTitle(), advertEntity.getPrice(), advertEntity.getImgLocation()))
                 .collect(Collectors.toList());
@@ -46,43 +53,38 @@ public class AdvertService {
 
 
     public void deleteAdvertById(Long id, String username) {
-        if (userRepository.findByUsername(username).getUserID().equals(advertRepository.findById(id).get().getUserId())) {
+        if (userRepository.findByUsername(username).get().getUserID().equals(advertRepository.findById(id).get().getUserId())) {
             advertRepository.deleteById(id);
         } else {
-            throw new RuntimeException("You are not the owner of this advert");
+            throw new InvalidDataException();
         }
     }
 
     public void createNewAdvert(AdvertUploadDto advertUploadDto, String username) {
-        if (userRepository.findByUsername(username).getUserID().equals(advertUploadDto.getUserID())) {
-            byte[] decodedBytes = Base64.getDecoder().decode(advertUploadDto.getImgData());
-            Path destinationFile = Paths.get("/images", advertUploadDto.getImgName());
-            try {
-                Files.write(destinationFile, decodedBytes);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to store image", e);
-            }
-            String imgLocation = destinationFile.toString();
-            advertRepository.save(new AdvertEntity(null, advertUploadDto.getTitle(), advertUploadDto.getDescription(), advertUploadDto.getPrice(), imgLocation, advertUploadDto.getUserID()));
-        } else {
-            throw new RuntimeException("You are not the owner of this advert");
+        Long userId = userRepository.findByUsername(username).get().getUserID();
+        byte[] decodedBytes = Base64.getDecoder().decode(advertUploadDto.getImgData());
+        Path destinationFile = Paths.get("images", advertUploadDto.getImgName());
+        try {
+            Files.write(destinationFile, decodedBytes);
+        } catch (IOException e) {
+            e.printStackTrace();
+            throw new RuntimeException();
         }
+        String imgLocation = destinationFile.toString();
+        advertRepository.save(new AdvertEntity(null, advertUploadDto.getTitle(), advertUploadDto.getDescription(), advertUploadDto.getPrice(), imgLocation, userId));
     }
 
     public void editAdvert(AdvertUploadDto advertUploadDto, String username, Long advertId) {
-        if (userRepository.findByUsername(username).getUserID().equals(advertUploadDto.getUserID())) {
-            byte[] decodedBytes = Base64.getDecoder().decode(advertUploadDto.getImgData());
-            Path destinationFile = Paths.get("/images", advertUploadDto.getImgName());
-            try {
-                Files.write(destinationFile, decodedBytes);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to store image", e);
-            }
-            String imgLocation = destinationFile.toString();
-            advertRepository.save(new AdvertEntity(advertId, advertUploadDto.getTitle(), advertUploadDto.getDescription(), advertUploadDto.getPrice(), imgLocation, advertUploadDto.getUserID()));
-        } else {
-            throw new RuntimeException("You are not the owner of this advert");
+        Long userId = userRepository.findByUsername(username).get().getUserID();
+        byte[] decodedBytes = Base64.getDecoder().decode(advertUploadDto.getImgData());
+        Path destinationFile = Paths.get("/images", advertUploadDto.getImgName());
+        try {
+            Files.write(destinationFile, decodedBytes);
+        } catch (IOException e) {
+            throw new RuntimeException();
         }
+        String imgLocation = destinationFile.toString();
+        advertRepository.save(new AdvertEntity(advertId, advertUploadDto.getTitle(), advertUploadDto.getDescription(), advertUploadDto.getPrice(), imgLocation, userId));
     }
 
     public AdvertMinimalDto getAdvertMinimalDtoById(Long id) {

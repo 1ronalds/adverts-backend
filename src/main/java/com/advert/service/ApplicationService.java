@@ -27,18 +27,18 @@ public class ApplicationService {
     }
 
     public List<ApplicationDto> getAllApplicationsForOthers(String username) {
-        List<ApplicationEntity> applicationEntityList = applicationRepository.findAllByUserID(userRepository.findByUsername(username).getUserID());
+        List<ApplicationEntity> applicationEntityList = applicationRepository.findAllByUserId(userRepository.findByUsername(username).get().getUserID());
         return applicationEntityList.stream()
                 .map(applicationEntity -> new ApplicationDto(advertService.getAdvertMinimalDtoById(applicationEntity.getAdvertId()), username))
                 .collect(Collectors.toList());
     }
 
     public void createNewApplication(String username, ApplicationDto applicationDto) {
-        applicationRepository.save(new ApplicationEntity(applicationDto.getAdvertMinimalDto().getAdvertID(), userRepository.findByUsername(username).getUserID()));
+        applicationRepository.save(new ApplicationEntity(applicationDto.getAdvertMinimalDto().getAdvertID(), userRepository.findByUsername(username).get().getUserID()));
     }
 
     public void deleteApplication(String username, Long application_id) {
-        if(applicationRepository.findById(application_id).get().getUserId().equals(userRepository.findByUsername(username).getUserID())){
+        if(applicationRepository.findById(application_id).get().getUserId().equals(userRepository.findByUsername(username).get().getUserID())){
             applicationRepository.deleteById(application_id);
         } else {
             throw new RuntimeException("You are not the owner of this application");
