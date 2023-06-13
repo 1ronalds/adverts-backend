@@ -18,20 +18,21 @@ public class ApplicationController {
     private final ApplicationService applicationService;
 
     @PreAuthorize("(#username == authentication.principal)")
-    @GetMapping("/mine/{username}/formine/")
+    @GetMapping("/formine/{username}")
     public ResponseEntity<List<ApplicationDto>> getAllMyApplicationsToMyAdvertismentsCreatedBy(@PathVariable String username){
         return ResponseEntity.ok(applicationService.getAllApplicationsCreatedBy(username));
     }
 
     @PreAuthorize("(#username == authentication.principal)")
-    @GetMapping("/mine/{username}/forothers/")
+    @GetMapping("/forothers/{username}")
     public ResponseEntity<List<ApplicationDto>> getAllApplicationsToOtherAdvertisements(@PathVariable String username){
         return ResponseEntity.ok(applicationService.getAllApplicationsForOthers(username));
     }
 
     @PreAuthorize("(#username == authentication.principal)")
-    @PostMapping("/mine/{username}/")
+    @PostMapping("/mine/{username}")
     public ResponseEntity<Void> createNewApplication(@PathVariable String username, @RequestBody ApplicationDto applicationDto){
+        System.out.println("1!");
         applicationService.createNewApplication(username, applicationDto);
         return ResponseEntity.noContent().build();
     }

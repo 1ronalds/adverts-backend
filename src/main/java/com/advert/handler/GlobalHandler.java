@@ -23,18 +23,25 @@ public class GlobalHandler {
                 "BAD_REQUEST", errors, request.getRequestURI());
         return new ResponseEntity<>(errorModel, HttpStatus.BAD_REQUEST);
     }
-/*
-    @ExceptionHandler(RuntimeException.class)
+
+    //@ExceptionHandler(RuntimeException.class)
     protected ResponseEntity<ErrorModel> handleServerError(Exception ex, HttpServletRequest request) {
         ErrorModel errorModel = new ErrorModel(LocalDate.now(), 500,
                 "INTERNAL_SERVER_ERROR", "Something has gone wrong", request.getRequestURI());
         return new ResponseEntity<>(errorModel, HttpStatus.INTERNAL_SERVER_ERROR);
     }
-*/
+
     @ExceptionHandler(InvalidDataException.class)
     protected ResponseEntity<ErrorModel> handleInvalidData(Exception ex, HttpServletRequest request) {
         ErrorModel errorModel = new ErrorModel(LocalDate.now(), 500,
                 "BAD_REQUEST", "Malformed data", request.getRequestURI());
+        return new ResponseEntity<>(errorModel, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidUsernamePasswordException.class)
+    protected ResponseEntity<ErrorModel> handleInvalidLogin(Exception ex, HttpServletRequest request) {
+        ErrorModel errorModel = new ErrorModel(LocalDate.now(), 500,
+                "BAD_REQUEST", "Incorrect username/password", request.getRequestURI());
         return new ResponseEntity<>(errorModel, HttpStatus.BAD_REQUEST);
     }
 }

@@ -3,6 +3,7 @@ package com.advert.repository.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 @Data
@@ -12,10 +13,10 @@ import javax.persistence.*;
 @Table(name = "application")
 public class ApplicationEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "advert_id")
     private Long advertId;
 
+    @NaturalId
     @Column(name = "user_id")
     private Long userId;
 

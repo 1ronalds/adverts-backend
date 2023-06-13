@@ -28,11 +28,8 @@ public class AdvertService {
     private final UserRepository userRepository;
 
     public List<AdvertMinimalDto> getAdvertList() {
-        System.out.println("hello");
-        System.out.println(advertRepository.findAll());
         return advertRepository.findAll()
                 .stream()
-                .peek(advertEntity -> log.info("Processing advert: {}", advertEntity)) // This will log each advertEntity
                 .map((advertEntity) -> new AdvertMinimalDto(advertEntity.getAdvertID(), advertEntity.getTitle(), advertEntity.getPrice(), advertEntity.getImgLocation()))
                 .collect(Collectors.toList());
     }
@@ -63,21 +60,22 @@ public class AdvertService {
     public void createNewAdvert(AdvertUploadDto advertUploadDto, String username) {
         Long userId = userRepository.findByUsername(username).get().getUserID();
         byte[] decodedBytes = Base64.getDecoder().decode(advertUploadDto.getImgData());
-        Path destinationFile = Paths.get("images", advertUploadDto.getImgName());
+        Path destinationFile = Paths.get("/var/www/html/images", advertUploadDto.getImgName());
+
         try {
             Files.write(destinationFile, decodedBytes);
         } catch (IOException e) {
             e.printStackTrace();
             throw new RuntimeException();
         }
-        String imgLocation = destinationFile.toString();
+        String imgLocation = "/images/" + advertUploadDto.getImgName();
         advertRepository.save(new AdvertEntity(null, advertUploadDto.getTitle(), advertUploadDto.getDescription(), advertUploadDto.getPrice(), imgLocation, userId));
     }
 
     public void editAdvert(AdvertUploadDto advertUploadDto, String username, Long advertId) {
         Long userId = userRepository.findByUsername(username).get().getUserID();
         byte[] decodedBytes = Base64.getDecoder().decode(advertUploadDto.getImgData());
-        Path destinationFile = Paths.get("/images", advertUploadDto.getImgName());
+        Path destinationFile = Paths.get("/var/www/html/images", advertUploadDto.getImgName());
         try {
             Files.write(destinationFile, decodedBytes);
         } catch (IOException e) {

@@ -34,8 +34,14 @@ public class ApplicationService {
     }
 
     public void createNewApplication(String username, ApplicationDto applicationDto) {
-        applicationRepository.save(new ApplicationEntity(applicationDto.getAdvertMinimalDto().getAdvertID(), userRepository.findByUsername(username).get().getUserID()));
+        Long advertId = applicationDto.getAdvertMinimalDto().getAdvertID();
+        System.out.println("advertId: " + advertId);
+        applicationRepository.save(new ApplicationEntity(advertId, userRepository.findByUsername(username).get().getUserID()));
     }
+    /*
+    public void createNewApplication(String username, ApplicationDto applicationDto) {
+        applicationRepository.save(new ApplicationEntity(applicationDto.getAdvertMinimalDto().getAdvertID(), userRepository.findByUsername(username).get().getUserID()));
+    }*/
 
     public void deleteApplication(String username, Long application_id) {
         if(applicationRepository.findById(application_id).get().getUserId().equals(userRepository.findByUsername(username).get().getUserID())){
