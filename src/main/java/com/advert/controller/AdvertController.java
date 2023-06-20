@@ -37,7 +37,7 @@ public class AdvertController {
         return ResponseEntity.ok(advertService.getAdvertById(id));
     }
 
-    @PreAuthorize("(#username == authentication.principal)")
+    @PreAuthorize("(#username == authentication.principal) or hasAuthority('admin')")
     @DeleteMapping("/delete/{username}/{id}")
     public ResponseEntity<Void> deleteAdvertById(@PathVariable Long id, @PathVariable String username){
         advertService.deleteAdvertById(id, username);
@@ -52,7 +52,7 @@ public class AdvertController {
     }
 
     @PreAuthorize("(#username == authentication.principal)")
-    @PutMapping("/edit/{username}/{id}")
+    @PutMapping("/edit/{username}/{advertId}")
     public ResponseEntity<Void> editAdvert(@Valid @RequestBody AdvertUploadDto advertUploadDto, @PathVariable String username, @PathVariable Long advertId){
         advertService.editAdvert(advertUploadDto, username, advertId);
         return ResponseEntity.noContent().build();

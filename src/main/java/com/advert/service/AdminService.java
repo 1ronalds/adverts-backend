@@ -39,4 +39,8 @@ public class AdminService {
             throw new RuntimeException("User already exists!");
         }
     }
+
+    public boolean isAdmin(String username){
+        return userRepository.findByUsername(username).get().isAdmin();
+    }
 }

@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @RequiredArgsConstructor
 public class ApplicationDto {
+    private Long applicationId;
     private AdvertMinimalDto advertMinimalDto;
     private String username;
 }

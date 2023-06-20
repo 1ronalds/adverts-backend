@@ -19,25 +19,33 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/admin")
-@PreAuthorize("hasAuthority('admin')")
+
 public class AdminController {
     private final AdminService adminService;
     
     @GetMapping("/admin-users")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<ArrayList<String>> findAllUsernames(){
         return ResponseEntity.ok(adminService.viewAdminUsers());
     }
 
     @DeleteMapping("/delete/{username}")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Void> deleteAdminUser(@PathVariable String username){
         adminService.deleteAdminUser(username);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/new")
+    @PreAuthorize("hasAuthority('admin')")
     public ResponseEntity<Void> createAdminUser(@Valid @RequestBody UserDto userDto){
         adminService.createAdminUser(userDto);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/isadmin/{username}")
+    public ResponseEntity<Boolean> isAdmin(@PathVariable String username){
+        return ResponseEntity.ok(adminService.isAdmin(username));
     }
 
 

@@ -61,14 +61,13 @@ public class AdvertService {
         Long userId = userRepository.findByUsername(username).get().getUserID();
         byte[] decodedBytes = Base64.getDecoder().decode(advertUploadDto.getImgData());
         Path destinationFile = Paths.get("/var/www/html/images", advertUploadDto.getImgName());
-
+        Path destionationFileOnWeb = Paths.get("/images", advertUploadDto.getImgName());
         try {
             Files.write(destinationFile, decodedBytes);
         } catch (IOException e) {
-            e.printStackTrace();
             throw new RuntimeException();
         }
-        String imgLocation = "/images/" + advertUploadDto.getImgName();
+        String imgLocation = destionationFileOnWeb.toString();
         advertRepository.save(new AdvertEntity(null, advertUploadDto.getTitle(), advertUploadDto.getDescription(), advertUploadDto.getPrice(), imgLocation, userId));
     }
 
@@ -76,18 +75,20 @@ public class AdvertService {
         Long userId = userRepository.findByUsername(username).get().getUserID();
         byte[] decodedBytes = Base64.getDecoder().decode(advertUploadDto.getImgData());
         Path destinationFile = Paths.get("/var/www/html/images", advertUploadDto.getImgName());
+        Path destionationFileOnWeb = Paths.get("/images", advertUploadDto.getImgName());
         try {
             Files.write(destinationFile, decodedBytes);
         } catch (IOException e) {
             throw new RuntimeException();
         }
-        String imgLocation = destinationFile.toString();
+        String imgLocation = destionationFileOnWeb.toString();
         advertRepository.save(new AdvertEntity(advertId, advertUploadDto.getTitle(), advertUploadDto.getDescription(), advertUploadDto.getPrice(), imgLocation, userId));
     }
 
     public AdvertMinimalDto getAdvertMinimalDtoById(Long id) {
         return advertRepository.findById(id)
-                .map((advertEntity) -> new AdvertMinimalDto(advertEntity.getAdvertID(), advertEntity.getTitle(), advertEntity.getPrice(), advertEntity.getImgLocation())).get();
+                .map((advertEntity) -> new AdvertMinimalDto(advertEntity.getAdvertID(), advertEntity.getTitle(), advertEntity.getPrice(), advertEntity.getImgLocation()))
+                .orElse(new AdvertMinimalDto(null, "Deleted", 0.0, ""));
     }
 }
 

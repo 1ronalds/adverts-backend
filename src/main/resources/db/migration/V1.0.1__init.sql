@@ -25,9 +25,8 @@ FOREIGN KEY (user_id) REFERENCES user(UserID)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 CREATE TABLE application (
+application_id bigint(20) NOT NULL AUTO_INCREMENT,
 advert_id bigint(20) NOT NULL,
 user_id bigint(20) NOT NULL,
-PRIMARY KEY (advert_id, user_id),
-FOREIGN KEY (advert_id) REFERENCES advert(AdvertID),
-FOREIGN KEY (user_id) REFERENCES user(UserID)
+PRIMARY KEY (application_id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
